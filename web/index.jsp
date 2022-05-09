@@ -152,7 +152,6 @@
                     
                     <input value="<%=xemail%>" type="hidden" name="txtantigo" id="txtantigo">
 
-
                     <div class="form-group">
                         <label for="razSocial" class="text">Razão Social</label><br>
                         <input value="<%=xrazaoSocial%>" type="text" name="razSocial" id="razSocial" class="form-control">
@@ -178,7 +177,6 @@
                         <label for="inemail" class="text">E-mail</label><br>
                         <input value="<%=xemail%>" type="email" name="inemail" id="inemail" class="form-control">
                     </div>  
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
