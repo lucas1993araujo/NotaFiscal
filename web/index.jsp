@@ -4,7 +4,6 @@
 <%@page import="config.Conexao"%>
 <%@page import="com.mysql.jdbc.Driver"%>
 
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -35,9 +34,9 @@
 
         <div class="container"> 
             <div class="form-row  mt-4 mb-4">
-                <a type="button" class="btn-info btn-sm ml-1" data-toggle="modal" data-target="#modal">Cadastra Cliente</a>
+                <a type="button" class="btn btn-primary btn-sm  ml-1" href="index.jsp?funcao=novo">Cadastrar Cliente</a>
                 <form class="form-inline my-1 my-lg-0 direita"method="post">
-                    <input class="form-control form-control-sm mr-sm-2" type="search" name="txtbuscar" placeholder="Pesquisar" aria-label="Pesquisar">
+                    <input class="form-control form-control-sm mr-sm-2" type="search" name="txtbuscar" placeholder="Pesquisar Cliente" aria-label="Pesquisar">
                     <button class="btn btn-outline-info btn-sm my-2 my-sm-0 d-none d-md-block" type="submit" name="btn-pesquisar">Pesquisar</button>
                 </form>
             </div>
@@ -46,7 +45,7 @@
                     <tr>
                         <th scope="col">Razão Social</th>
                         <th scope="col">CNPJ</th>
-                        <th scope="col">Tipo de Regime Tributário</th>
+                        <th scope="col">Regime Tributário</th>
                         <th scope="col">E-mail</th>
                         <th scope="col">Ações</th>
 
@@ -78,9 +77,9 @@
                         <td><%= rs.getString(4)%></td>
                         <td><%= rs.getString(5)%></td>
                         <td>
-                            <a name="" href="index.jps?funcao=editar&id=<%= rs.getString(1)%>" type="button" class="btn btn-secondary">Editar</a>
-                            <a name=""  href="index.jps?funcao=excluir&id=<%= rs.getString(1)%>" type="button" " class="btn btn-danger">Excluir</a>
-                          
+                            <a name="" href="index.jsp?funcao=editar&id=<%= rs.getString(1)%>" type="button" class="btn btn-secondary btn-sm">Editar</a>
+                            <a name=""  href="index.jsp?funcao=excluir&id=<%= rs.getString(1)%>" type="button" " class="btn btn-danger btn-sm">Excluir</a>
+
                         </td>
                     </tr>
 
@@ -100,6 +99,9 @@
         </div>
 
 
+        <footer class="footer mt-autor py-3 bg-light">
+            <div class="conteiner"></div>
+        </footer>
 
 
     </body>
@@ -110,39 +112,77 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="hmodal">Cadastrar Novo Cliente</h5>
+                <%                    
+                    String titulo = "";
+                    String btn = "";
+                    String xid = "";
+                    String xrazaoSocial = "";
+                    String xcnpj = "";
+                    String xemail = "";
+                    String xtipoRegimeTributario = "";
+                    if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("editar")) {
+                        titulo = "Editar Usuário";
+                        btn = "btn-editar";
+                        xid = request.getParameter("id");
+                        try {
+
+                            st = new Conexao().conectar().createStatement();
+                            rs = st.executeQuery("SELECT * FROM clientes where id = '" + xid + "'");
+                            while (rs.next()) {
+                                xrazaoSocial = rs.getString(2);
+                                xcnpj = rs.getString(3);
+                                xtipoRegimeTributario = rs.getString(4);
+                                xemail = rs.getString(5);
+                            }
+                        } catch (Exception e) {
+                        }
+
+                    } else {
+                        titulo = "Inserir Usuário";
+                        btn = "btn-salvar";
+                    }
+                %>
+                <h5 class="modal-title" id="hmodal"><%=titulo%></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <form id="cadastro-form" class="form" action="" method="post">
                 <div class="modal-body">
+                    
+                    <input value="<%=xemail%>" type="hidden" name="txtantigo" id="txtantigo">
 
 
                     <div class="form-group">
                         <label for="razSocial" class="text">Razão Social</label><br>
-                        <input type="text" name="razSocial" id="razSocial" class="form-control">
+                        <input value="<%=xrazaoSocial%>" type="text" name="razSocial" id="razSocial" class="form-control">
                     </div>
                     <div class="form-group">
                         <label for="incnpj" class="text">CNPJ</label><br>
-                        <input type="text" name="incnpj" id="incnpj" class="form-control">
+                        <input value="<%=xcnpj%>" type="text" name="incnpj" id="incnpj" class="form-control">
                     </div>
                     <div class="form-group">
-                        <label for="tipodeRegimeTributario">Tipo de Regime Tributário</label>
+                        <label for="tipodeRegimeTributario">Regime Tributário</label>
                         <select class="form-control" name="tipodeRegimeTributario" id="tipodeRegimeTributario">
-                            <option>Simples Nacional</option>
-                            <option>Lucro Presumido</option>
+                            <option value="<%=xtipoRegimeTributario%>"><%=xtipoRegimeTributario%></option>
+                            <%if(!xtipoRegimeTributario.equals("Simples Nacional")){
+                                out.print("<option>Simples Nacional</option>");
+                            }
+                            if(!xtipoRegimeTributario.equals("Lucro Presumido")){
+                                out.print("<option>Lucro Presumido</option>");
+                            }
+                            %>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="inemail" class="text">E-mail</label><br>
-                        <input type="email" name="inemail" id="inemail" class="form-control">
+                        <input value="<%=xemail%>" type="email" name="inemail" id="inemail" class="form-control">
                     </div>  
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                    <button type="submit" name="salvar" class="btn btn-primary">Salvar</button>
+                    <button type="submit" name="<%=btn %>" class="btn btn-primary"><%=titulo%></button>
                 </div>
 
             </form>
@@ -151,7 +191,7 @@
     </div>
 </div>
 
-<%    if (request.getParameter("salvar") != null) {
+<%    if (request.getParameter("btn-salvar") != null) {
         String razaoSocial = request.getParameter("razSocial");
         String cnpj = request.getParameter("incnpj");
         String email = request.getParameter("inemail");
@@ -173,23 +213,63 @@
             response.sendRedirect("index.jsp");
 
         } catch (Exception e) {
-             out.print(e);
+            out.print(e);
         }
 
     }
 %>
+<%    if (request.getParameter("btn-editar") != null) {
+        String razaoSocial = request.getParameter("razSocial");
+        String cnpj = request.getParameter("incnpj");
+        String email = request.getParameter("inemail");
+        String tipoRegimeTributario = request.getParameter("tipodeRegimeTributario");
+        String id = request.getParameter("id");
+        String antigo = request.getParameter("txtantigo");
 
-
-<%    
-    if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("excluir")) {
-          String id = request.getParameter("id");
         try {
             st = new Conexao().conectar().createStatement();
-            st.executeUpdate("DELETE FROM clientes WHERE `id` = 1");
+            if(!antigo.equals(email)){
+
+            rs = st.executeQuery("SELECT * FROM clientes where email = '" + email + "'");
+            while (rs.next()) {
+                rs.getRow();
+                if (rs.getRow() > 0) {
+                    out.print("<script>alert('Usuario Já Cadastrado!');</script>");
+                    return;
+                }
+            }
+            }
+            st.executeUpdate("UPDATE clientes SET razaoSocial = '" + razaoSocial + "', cnpj = '" + cnpj + "', regimeTributario = '" + tipoRegimeTributario + "', email = '" + email + "' WHERE id = '" + id + "'");
             response.sendRedirect("index.jsp");
-            
+
         } catch (Exception e) {
             out.print(e);
         }
+        
+    }
+%>
+
+<%
+    if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("excluir")) {
+        String id = request.getParameter("id");
+        try {
+            st = new Conexao().conectar().createStatement();
+            st.executeUpdate("DELETE FROM clientes WHERE `id` = '" + id + "'");
+            response.sendRedirect("index.jsp");
+
+        } catch (Exception e) {
+            out.print(e);
+        }
+    }
+%>
+
+<%
+    if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("editar")) {
+        out.print("<script>$('#modal').modal('show');</script>");
+    }
+%>
+<%
+    if (request.getParameter("funcao") != null && request.getParameter("funcao").equals("novo")) {
+        out.print("<script>$('#modal').modal('show');</script>");
     }
 %>
